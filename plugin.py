@@ -61,8 +61,8 @@ class BasePlugin:
         
         _tv = BraviaRC(Parameters["Address"], Parameters["Mode1"], Parameters["Mode2"]) #IP, PSK, MAC
         
-        Options =   {   "LevelActions"  :"|||||" , 
-                        "LevelNames"    :"Off|TV|HDMI1|HDMI2|HDMI3|HDMI4" ,
+        Options =   {   "LevelActions"  :"||||||" ,
+                        "LevelNames"    :"Off|TV|HDMI1|HDMI2|HDMI3|HDMI4|Netflix" ,
                         "LevelOffHidden":"true",
                         "SelectorStyle" :"0"
                      }
@@ -181,6 +181,11 @@ class BasePlugin:
                         self.tvPlaying = "HDMI 4"
                         self.tvSource = "50"
                         self.SyncDevices()
+                    if Level == 60:
+                        _tv.send_req_ircc("AAAAAgAAABoAAAB8Aw==") #Netflix
+                        self.tvPlaying = "Netflix"
+                        self.tvSource = "60"
+                        self.SyncDevices()
         
         return
 
@@ -190,7 +195,7 @@ class BasePlugin:
         return
         
     # Executed once when HW updated/removed
-    def onStop():
+    def onStop(self):
         Domoticz.Log("onStop called")
         return True
     
@@ -263,6 +268,8 @@ class BasePlugin:
                     UpdateDevice(3, 1, "40")    # Set source device to HDMI3
                 elif "HDMI 4" in self.tvPlaying:
                     UpdateDevice(3, 1, "50")    # Set source device to HDMI4
+                elif "Netflix" in self.tvPlaying:
+                    UpdateDevice(3, 1, "60")    # Set source device to Netflix
             
             # Get volume information of TV
             if Parameters["Mode3"] == "Volume":
